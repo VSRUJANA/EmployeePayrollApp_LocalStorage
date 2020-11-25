@@ -2,12 +2,14 @@ class EmployeePayRoll
 {
    // getter and setter method
    get id() { return this._id; }
-   set id(id) { 
+   set id(id) 
+   { 
      this._id = id; 
    }
  
    get name() { return this._name; }
-   set name(name) { 
+   set name(name) 
+   { 
      let nameRegex = RegExp('^[A-Z]{1}[a-zA-Z\\s]{2,}$');
      if (nameRegex.test(name))
        this._name = name; 
@@ -43,19 +45,15 @@ class EmployeePayRoll
    }
  
    get startDate() { return this._startDate; }
-   set startDate(startDate) { 
-    let now = new Date();
-    if (startDate > now) throw 'Start Date is a Future Date!';
-    var diff = Math.abs(now.getTime() - startDate.getTime());
-    if (diff / (1000 * 60 * 60 * 24) > 30) 
-      throw 'Start Date is beyond 30 Days!';
+   set startDate(startDate) 
+  { 
     this._startDate = startDate; 
   }
  
    // method
    toString() {
-     return "id=" + this.id + ", name='" + this.name + ", gender='" + this.gender + 
-            ", profilePic='" + this.profilePic + ", department=" + this.department +
-            ", salary=" + this.salary + ", startDate=" + this.startDate + ", note=" + this.note;
+     return "id=" + this._id + ", name='" + this._name + ", gender='" + this._gender + 
+            ", profilePic='" + this._profilePic + ", department=" + this._department +
+            ", salary=" + this._salary + ", startDate=" + this._startDate.toString("dd/MM/yyyy") + ", note=" + this._note;
    }
 }

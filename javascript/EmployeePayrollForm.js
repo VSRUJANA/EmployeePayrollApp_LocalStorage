@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', (event) =>
         }
         catch (e) 
         {
-            textError.textContent = e+ " "+e.lineNumber ;
+            textError.textContent = e;
         }
     });
 
@@ -43,8 +43,9 @@ const save = () =>
 {
     try 
     {
-        alert(CreateEmployeeObject().toString());
-        return false;
+        let employeePayrollData = CreateEmployeePayroll();
+        SaveToLocalStorage(employeePayrollData);
+        return;
     }
     catch (e) 
     {
@@ -52,67 +53,60 @@ const save = () =>
     }
 }
 
-/*
-function save()
-{
-    let department = [];
-    let result = [];
-    department = Array.from(document.querySelectorAll("[name = department]"));
-    result = department.filter(p => p.checked === true);
-    if(result.length > 0)
-    {
-        try
-        {
-            alert(createEmployeePayroll().toString());
-            return true;
-        }
-        catch(e)
-        {
-            alert(e);
-            if(e.toString().includes("name"))
-                document.querySelector("#name").focus();
-            if(e.toString().includes("Date"))
-                Array.from(document.querySelectorAll('select')).forEach(p => p.focus());
-        }
-    }
-    else if(result.length <=0)
-    {
-        alert('Select atleast one department');
-        department.forEach(p => p.focus());
-        return false;
-    }
-    return false;
-}*/
-
 // Create an object of Employee class
-const createEmployeePayroll=()=>
+function CreateEmployeePayroll()
 { 
-    let employeePayrollData = new EmployeePayRoll();
-    employeePayrollData.name = getInputElementValue('#name');
-    employeePayrollData.profilePic = getSelectedValues('[name=profile]').pop();
-    employeePayrollData.gender = getSelectedValues('[name=gender]').pop(); 
-    employeePayrollData.department = getSelectedValues('[name=department]');
-    employeePayrollData.salary = getInputElementValue('#salary');
-    employeePayrollData.note = getInputElementValue('#notes');
-    let date = getInputElementValue('#year')+","+getInputElementValue('#month')+","+getInputElementValue('#day');
-    employeePayrollData.startDate = new Date(date)
-    return employeePayrollData; 
+    try
+    {
+        let employeePayrollData = new EmployeePayRoll();   
+        let existingList = JSON.parse(localStorage.getItem("EmployeePayrollList"));
+        employeePayrollData.id = (existingList == null) ? 1 : existingList.length + 1;
+        employeePayrollData.name = getInputElementValue('#name');
+        employeePayrollData.profilePic = getSelectedValues('[name=profile]').pop();
+        employeePayrollData.gender = getSelectedValues('[name=gender]').pop();
+        employeePayrollData.department = getSelectedValues('[name=department]');
+        employeePayrollData.salary = getInputElementValue('#salary');
+        employeePayrollData.note = getInputElementValue('#notes');
+        let date = getInputElementValue('#year') + "," + getInputElementValue('#month') + "," + getInputElementValue('#day');
+        employeePayrollData.startDate = new Date(date)
+        return employeePayrollData;
+    }
+    catch(e)
+    {
+        alert(e);
+    }
 }
 
-const getSelectedValues = (propertyValue) =>
+function getSelectedValues(propertyValue)
 {
-    let allItems = Array.from(document.querySelectorAll(propertyValue)); 
-    let sellItems = [];
+    let allItems = document.querySelectorAll(propertyValue);
+    let selectedItems = [];
     allItems.forEach(item => 
     {
-        if(item.checked) 
-        sellItems.push(item.value);
+        if (item.checked)
+            selectedItems.push(item.value);
     });
-    return sellItems;
+    return selectedItems;
 }
             
 const getInputElementValue = (id) =>
 {
     let value = document.querySelector(id).value;
     return value; 
+}
+
+function SaveToLocalStorage(employeeData)
+{
+    let employeePayrollList = JSON.parse(localStorage.getItem("EmployeePayrollList"));
+    if(employeePayrollList != undefined)
+    {
+        employeePayrollList.push(employeeData);
+    }
+    else
+    {
+        employeePayrollList = [employeeData];
+    }
+    alert(employeePayrollList.toString());
+    localStorage.setItem("EmployeePayrollList",JSON.stringify(employeePayrollList));
+    alert("Employee added successfully!");
 }
